@@ -1,0 +1,58 @@
+with open("raw.txt", "r", encoding="utf-8") as f:
+    print(f.read())
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    print(f.readline())
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    lines = f.readlines()
+print(len(lines))
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    lines = f.readlines()
+print(lines[-1])
+
+
+
+word = "data"
+with open("raw.txt", "r", encoding="utf-8") as f:
+    for line in f:
+        if word in line:
+            print(line.strip())
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    for i, line in enumerate(f, 1):
+        print(i, line.strip())
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    lines = f.readlines()
+print(max(lines, key=len))
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    lines = list(f)
+print(lines)
+
+
+
+def read_raw():
+    with open("raw.txt", "r", encoding="utf-8") as f:
+        return f.read()
+print(read_raw())
+
+
+
+with open("raw.txt", "r", encoding="utf-8") as f:
+    text = f.read()
+print(text[::-1])
