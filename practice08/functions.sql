@@ -1,0 +1,6 @@
+CREATE OR REPLACE FUNCTION phone_length(p_phone VARCHAR)
+RETURNS INT AS $$
+BEGIN
+    RETURN LENGTH(p_phone);
+END;
+$$ LANGUAGE plpgsql;
