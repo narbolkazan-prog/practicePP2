@@ -1,6 +1,10 @@
 import psycopg2
-from config import load_config
+from config import DB_CONFIG
 
 def connect():
-    conn = psycopg2.connect(**load_config())
-    return conn
+    return psycopg2.connect(
+        host=DB_CONFIG["host"],
+        database=DB_CONFIG["database"],
+        user=DB_CONFIG["user"],
+        password=DB_CONFIG["password"]
+    )
