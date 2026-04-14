@@ -10,7 +10,7 @@ pygame.display.set_caption("Mickey's Clock")
 
 clock = pygame.time.Clock()
 
-# ✅ Correct path (your folder is "image")
+
 BASE_DIR = os.path.dirname(__file__)
 image_path = os.path.join(BASE_DIR, "image", "mickey_hand.png")
 
