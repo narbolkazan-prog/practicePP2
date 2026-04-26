@@ -8,7 +8,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Mickey Clock")
 
 clock = pygame.time.Clock()
-mickey = MickeyClock(screen)
 
 running = True
 while running:
