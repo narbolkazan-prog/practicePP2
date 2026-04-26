@@ -5,14 +5,17 @@ class Ball:
         self.radius = 25
         self.x = screen_width // 2
         self.y = screen_height // 2
+
         self.screen_width = screen_width
         self.screen_height = screen_height
+
+        self.color = (255, 0, 0)  # red
 
     def move(self, dx, dy):
         new_x = self.x + dx
         new_y = self.y + dy
 
-        # Boundary check
+        # boundary check (ball толық экран ішінде қалу керек)
         if self.radius <= new_x <= self.screen_width - self.radius:
             self.x = new_x
 
@@ -20,4 +23,4 @@ class Ball:
             self.y = new_y
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), self.radius)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)

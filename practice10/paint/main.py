@@ -1,102 +1,89 @@
 import pygame
+import sys
 
 pygame.init()
 
+# Screen
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Paint App")
-
-clock = pygame.time.Clock()
-
-# Canvas
-canvas = pygame.Surface((WIDTH, HEIGHT))
-canvas.fill((255, 255, 255))
+pygame.display.set_caption("Drawing App")
 
 # Colors
+WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-WHITE = (255, 255, 255)
 
+colors = [BLACK, RED, GREEN, BLUE, (255, 255, 0)]
 current_color = BLACK
+
+# Tools
 tool = "brush"
 
-start_pos = None
+# Variables
 drawing = False
+start_pos = None
 
-font = pygame.font.SysFont("Arial", 20)
+screen.fill(WHITE)
 
-running = True
-while running:
-    screen.fill((200, 200, 200))
-    screen.blit(canvas, (0, 0))
+clock = pygame.time.Clock()
 
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            pygame.quit()
+            sys.exit()
 
-        # KEY CONTROLS (tools)
+        # Keyboard controls
         if event.type == pygame.KEYDOWN:
-
-            # Tools
-            if event.key == pygame.K_b:
-                tool = "brush"
-            if event.key == pygame.K_r:
-                tool = "rectangle"
-            if event.key == pygame.K_c:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+            elif event.key == pygame.K_r:
+                tool = "rect"
+            elif event.key == pygame.K_c:
                 tool = "circle"
-            if event.key == pygame.K_e:
+            elif event.key == pygame.K_b:
+                tool = "brush"
+            elif event.key == pygame.K_e:
                 tool = "eraser"
+            elif event.key == pygame.K_1:
+                current_color = colors[0]
+            elif event.key == pygame.K_2:
+                current_color = colors[1]
+            elif event.key == pygame.K_3:
+                current_color = colors[2]
+            elif event.key == pygame.K_4:
+                current_color = colors[3]
+            elif event.key == pygame.K_5:
+                current_color = colors[4]
 
-            # Colors
-            if event.key == pygame.K_1:
-                current_color = BLACK
-            if event.key == pygame.K_2:
-                current_color = RED
-            if event.key == pygame.K_3:
-                current_color = GREEN
-            if event.key == pygame.K_4:
-                current_color = BLUE
-
-        # Mouse press
+        # Mouse pressed
         if event.type == pygame.MOUSEBUTTONDOWN:
-            start_pos = event.pos
             drawing = True
+            start_pos = event.pos
 
-        # Mouse release
+        # Mouse released
         if event.type == pygame.MOUSEBUTTONUP:
-            end_pos = event.pos
             drawing = False
+            end_pos = event.pos
 
-            # RECTANGLE
-            if tool == "rectangle":
-                x = min(start_pos[0], end_pos[0])
-                y = min(start_pos[1], end_pos[1])
-                w = abs(start_pos[0] - end_pos[0])
-                h = abs(start_pos[1] - end_pos[1])
-                pygame.draw.rect(canvas, current_color, (x, y, w, h), 2)
+            if tool == "rect":
+                rect = pygame.Rect(start_pos, (end_pos[0]-start_pos[0], end_pos[1]-start_pos[1]))
+                pygame.draw.rect(screen, current_color, rect, 2)
 
-            # CIRCLE
-            if tool == "circle":
+            elif tool == "circle":
                 radius = int(((end_pos[0]-start_pos[0])**2 + (end_pos[1]-start_pos[1])**2) ** 0.5)
-                pygame.draw.circle(canvas, current_color, start_pos, radius, 2)
+                pygame.draw.circle(screen, current_color, start_pos, radius, 2)
 
-    # BRUSH / ERASER (hold mouse)
-    if drawing:
-        mouse = pygame.mouse.get_pos()
+        # Mouse motion
+        if event.type == pygame.MOUSEMOTION and drawing:
+            if tool == "brush":
+                pygame.draw.circle(screen, current_color, event.pos, 3)
 
-        if tool == "brush":
-            pygame.draw.circle(canvas, current_color, mouse, 5)
-
-        if tool == "eraser":
-            pygame.draw.circle(canvas, WHITE, mouse, 20)
-
-    # UI TEXT
-    text = font.render(f"Tool: {tool} | Colors: 1-black 2-red 3-green 4-blue", True, BLACK)
-    screen.blit(text, (10, 10))
+            elif tool == "eraser":
+                pygame.draw.circle(screen, WHITE, event.pos, 10)
 
     pygame.display.flip()
     clock.tick(60)
-
-pygame.quit()

@@ -3,102 +3,105 @@ import random
 
 pygame.init()
 
-# Screen size
-WIDTH, HEIGHT = 600, 400
+WIDTH, HEIGHT = 600, 600
+CELL = 20  
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Snake Game - Levels")
+pygame.display.set_caption("Snake Game")
 
 clock = pygame.time.Clock()
 
-# Colors
+
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
 RED = (200, 0, 0)
+BLACK = (0, 0, 0)
 
-# Snake settings
-block = 20
+
+font = pygame.font.SysFont("Arial", 24)
+
+
 snake = [(100, 100)]
-direction = (block, 0)
+dx, dy = CELL, 0 
 
-# Food
+
 def generate_food():
+    """Тамақты snake үстіне түспейтіндей етіп генерациялау"""
     while True:
-        x = random.randint(0, (WIDTH - block) // block) * block
-        y = random.randint(0, (HEIGHT - block) // block) * block
-
+        x = random.randrange(0, WIDTH, CELL)
+        y = random.randrange(0, HEIGHT, CELL)
         if (x, y) not in snake:
             return (x, y)
 
 food = generate_food()
 
-# Score & Level
 score = 0
 level = 1
-speed = 8
-
-font = pygame.font.SysFont("Arial", 24)
+speed = 10  
 
 running = True
 while running:
-    screen.fill(BLACK)
+    screen.fill(WHITE)
 
-    # EVENTS
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        # movement control
+    
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and direction != (0, block):
-                direction = (0, -block)
-            if event.key == pygame.K_DOWN and direction != (0, -block):
-                direction = (0, block)
-            if event.key == pygame.K_LEFT and direction != (block, 0):
-                direction = (-block, 0)
-            if event.key == pygame.K_RIGHT and direction != (-block, 0):
-                direction = (block, 0)
+            if event.key == pygame.K_UP and dy == 0:
+                dx, dy = 0, -CELL
+            elif event.key == pygame.K_DOWN and dy == 0:
+                dx, dy = 0, CELL
+            elif event.key == pygame.K_LEFT and dx == 0:
+                dx, dy = -CELL, 0
+            elif event.key == pygame.K_RIGHT and dx == 0:
+                dx, dy = CELL, 0
 
-    # MOVE SNAKE
-    head_x, head_y = snake[0]
-    new_head = (head_x + direction[0], head_y + direction[1])
+    head = (snake[0][0] + dx, snake[0][1] + dy)
 
-    # ❌ WALL COLLISION
-    if (new_head[0] < 0 or new_head[0] >= WIDTH or
-        new_head[1] < 0 or new_head[1] >= HEIGHT):
-        print("Game Over - Wall hit!")
+    if (
+        head[0] < 0 or head[0] >= WIDTH or
+        head[1] < 0 or head[1] >= HEIGHT
+    ):
+        print("Game Over: Wall collision")
         running = False
 
-    # ❌ SELF COLLISION
-    if new_head in snake:
-        print("Game Over - Self collision!")
+    
+    if head in snake:
+        print("Game Over: Self collision")
         running = False
 
-    snake.insert(0, new_head)
+    snake.insert(0, head)
 
-    # 🍎 FOOD EAT
-    if new_head == food:
+    
+    if head == food:
         score += 1
+
+
         food = generate_food()
 
-        # LEVEL SYSTEM
-        if score % 3 == 0:
+        
+        if score % 3 == 0:  
             level += 1
-            speed += 2  # increase speed
-
+            speed += 2  
     else:
-        snake.pop()  # remove tail if no food eaten
+        snake.pop()
 
-    # DRAW FOOD
-    pygame.draw.rect(screen, RED, (*food, block, block))
+    
+    for segment in snake:
+        pygame.draw.rect(screen, GREEN, (*segment, CELL, CELL))
 
-    # DRAW SNAKE
-    for part in snake:
-        pygame.draw.rect(screen, GREEN, (*part, block, block))
+    
+    pygame.draw.rect(screen, RED, (*food, CELL, CELL))
 
-    # SCORE + LEVEL TEXT
-    text = font.render(f"Score: {score}  Level: {level}", True, WHITE)
-    screen.blit(text, (10, 10))
+    
+    score_text = font.render(f"Score: {score}", True, BLACK)
+    level_text = font.render(f"Level: {level}", True, BLACK)
+
+    screen.blit(score_text, (10, 10))
+    screen.blit(level_text, (10, 40))
 
     pygame.display.flip()
     clock.tick(speed)
